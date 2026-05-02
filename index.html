@@ -22,6 +22,80 @@
   
   <script src="data/new.js"></script>
 
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const pubs = document.querySelectorAll(".publication-item");
+      const venueCount = {};
+    
+      // Count occurrences
+      pubs.forEach(pub => {
+        const type = pub.dataset.type || "";
+
+        // Skip submitted papers
+        if (type.includes("Submitted")) return;
+
+        const venueDiv = pub.querySelector(".venue");
+        if (venueDiv && venueDiv.dataset.venue) {
+          const venue = venueDiv.dataset.venue;
+
+          if (venueCount[venue]) {
+            venueCount[venue]++;
+          } else {
+            venueCount[venue] = 1;
+          }
+        }
+      });
+    
+      const venueList = document.getElementById("venue-list");
+    
+      // "All" button with total count
+      // const total = pubs.length;
+      const total = [...pubs].filter(pub => {
+        const type = pub.dataset.type || "";
+        return !type.includes("Submitted");
+      }).length;
+    
+      const allLi = document.createElement("li");
+      const allLink = document.createElement("a");
+      allLink.href = "#";
+      allLink.textContent = `All (${total})`;
+    
+      allLink.addEventListener("click", function (e) {
+        e.preventDefault();
+        pubs.forEach(pub => pub.style.display = "block");
+      });
+    
+      allLi.appendChild(allLink);
+      venueList.appendChild(allLi);
+    
+      // Sort venues alphabetically
+      const venues = Object.keys(venueCount).sort();
+    
+      // Create list with counts
+      venues.forEach(venue => {
+        const count = venueCount[venue];
+    
+        const li = document.createElement("li");
+        const link = document.createElement("a");
+    
+        link.href = "#";
+        link.textContent = `${venue} (${count})`;
+    
+        link.addEventListener("click", function (e) {
+          e.preventDefault();
+    
+          pubs.forEach(pub => {
+            const v = pub.querySelector(".venue").dataset.venue;
+            pub.style.display = (v === venue) ? "block" : "none";
+          });
+        });
+    
+        li.appendChild(link);
+        venueList.appendChild(li);
+      });
+    });
+    </script>
+
   <!-- Preload the following -->
   <!-- <link rel="preload" as="image" href="https:/scholar.googleusercontent.com/citations?view_op=view_photo&user=BF-qCIIAAAAJ&citpid=1"> -->
   <!-- <link rel="preload" as="font" href="data/css.css">
@@ -42,17 +116,22 @@
       <span><h1><b>Daniel Fusaro,<br>Ph.D.</b></h1></span>
       <br>
       <p>
-        <a href="mailto:fusarodani@dei.unipd.it"><img src="data/icons8-circled-envelope-white-color-96.png" width="16%" alt=""></a>
+        <a href="mailto:fusarodani@dei.unipd.it"><img src="data/icons8-circled-envelope-white-color-96.png" width="12%" alt=""></a>
         &nbsp;&nbsp;
-        <a href="https://github.com/Bender97"><img src="data/icons8-github-white-color-96.png" width="16%" alt=""></a>
+        <a href="https://github.com/Bender97"><img src="data/icons8-github-white-color-96.png" width="12%" alt=""></a>
         &nbsp;&nbsp;
-        <a href="https://scholar.google.com/citations?user=BF-qCIIAAAAJ&hl=it"><img src="data/icons8-google-scholar-white-color-96.png" width="16%" alt=""></a>
-        &nbsp;&nbsp;<br><br>
+        <a href="https://scholar.google.com/citations?user=BF-qCIIAAAAJ&hl=it"><img src="data/icons8-google-scholar-white-color-96.png" width="12%" alt=""></a>
+        &nbsp;&nbsp;
         <!-- <a href="https:/x.com/fusydan" target="_blank"><img src="data/icons8-twitter-circled-white-color-96.png" width="16%" alt=""></a> -->
         <!-- &nbsp;&nbsp; -->
-        <a href="https://www.linkedin.com/in/daniel-fusaro-473320164/"><img src="data/icons8-linkedin-white-color-96.png" width="16%" alt=""></a>
+        <a href="https://www.linkedin.com/in/daniel-fusaro-473320164/"><img src="data/icons8-linkedin-white-color-96.png" width="12%" alt=""></a>
         &nbsp;&nbsp;
       </p>
+
+      <div id="venue-sidebar">
+        <h2>Venues</h2>
+        <ul id="venue-list" class="venue-grid" ></ul>
+      </div>
   </header>
 
       
@@ -235,7 +314,7 @@ Recent Publications
             <span class="author">Michele Moro</span>,
             <span class="author">Emanuele Menegatti</span>
           </div>
-          <div class="venue">
+          <div class="venue" data-venue="RiE">
             <i>Robotics in Education (RiE)</i>, 2026 
           </div>
           <div>
@@ -271,7 +350,7 @@ Recent Publications
             <span class="author">Michele Moro</span>,
             <span class="author">Emanuele Menegatti</span>
           </div>
-          <div class="venue">
+          <div class="venue" data-venue="RiE">
             <i>Robotics in Education (RiE)</i>, 2026 
           </div>
           <div>
@@ -307,7 +386,7 @@ Recent Publications
             <span class="author">Alberto Pretto</span>,
             <span class="author">Cyrill Stachniss</span>
           </div>
-          <div class="venue">
+          <div class="venue" data-venue="COMPAG">
             <i>Computers and Electronics in Agriculture</i>, 2026 
           </div>
           <div>
@@ -348,7 +427,7 @@ Recent Publications
             <span class="author">Marco Stefani</span>,
             <span class="author">Alessandro Dario</span>
           </div>
-          <div class="venue">
+          <div class="venue" data-venue="TCBB">
             <i><u>Submitted to</u> IEEE/ACM Transactions on Computational Biology and Bioinformatics</i>, 2026 
           </div>
           <div>
@@ -383,9 +462,9 @@ Recent Publications
             <span class="author">Simone Mosco</span>,
             <span class="author">Alberto Pretto</span>
           </div>
-          <div class="venue">
+          <div class="venue" data-venue="T-ITS">
             <i><u>Submitted to</u> IEEE Transactions on Intelligent Transportation Systems (T-ITS)</i>, 2026 
-          </div>
+          </div>data-venue=
           <div>
             <!-- <i><img src="data/icons8-pdf-96.png" width="4%" alt=""></i> <span class="tag"><a href="https://doi.org/10.1016/j.compag.2026.111723" target="_blank">PDF</a></span> -->
             <!-- &nbsp; | &nbsp; -->
@@ -415,7 +494,7 @@ Recent Publications
             <span class="author">Wanmeng Li</span>,
             <span class="author">Alberto Pretto</span>
           </div>
-          <div class="venue">
+          <div class="venue" data-venue="IROS">
             <i><u>Submitted to</u> IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)</i>, 2026 
           </div>
           <div>
@@ -451,7 +530,7 @@ Recent Publications
             <span class="author">Wanmeng Li</span>,
             <span class="author">Alberto Pretto</span>
           </div>
-          <div class="venue">
+          <div class="venue" data-venue="IROS">
             <i><u>Submitted to</u> IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)</i>, 2026 
           </div>
           <div>
@@ -487,7 +566,7 @@ Recent Publications
             <span class="author">Wanmeng Li</span>
             <span class="author">Alberto Pretto</span>
           </div>
-          <div class="venue">
+          <div class="venue" data-venue="WACV">
             <i>Proceedings of the IEEE/CVF Winter Conference on Applications of Computer Vision (WACV), 2026 
             </div>
           <div>
@@ -530,7 +609,7 @@ Recent Publications
             <span class="me">Daniel Fusaro</span>,
             <span class="author">Alberto Pretto</span>
           </div>
-          <div class="venue">
+          <div class="venue" data-venue="CVPR">
             <i>Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR), 2026 
             </div>
           <div>
@@ -572,7 +651,7 @@ Recent Publications
             <span class="author">Loris Nanni</span>
             <span class="me">Daniel Fusaro</span>,
           </div>
-          <div class="venue">
+          <div class="venue" data-venue="Sensors">
             <i>Sensors</i>, 2026 
           </div>
           <div>
@@ -617,7 +696,7 @@ Recent Publications
             <span class="author">Roger De Almeida Matos Junior</span>,
             <span class="me">Daniel Fusaro</span>
           </div>
-          <div class="venue">
+          <div class="venue" data-venue="Algorithms">
             <i>Algorithms</i>, 2025
           </div>
           <div>
@@ -658,7 +737,7 @@ Recent Publications
             <span class="author">Emanuele Menegatti</span>,
             <span class="author">Alberto Pretto</span>
           </div>
-          <div class="venue">
+          <div class="venue" data-venue="CVIU">
             <i><u>Submitted to</u> Computer Vision and Image Understanding (CVIU)</i>, 2025
           </div>
           <div>
@@ -700,7 +779,7 @@ Recent Publications
             <span class="me">Daniel Fusaro</span>,
             <span class="author">Alberto Pretto</span>
           </div>
-          <div class="venue">
+          <div class="venue" data-venue="IROS">
             <i>IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)</i>, 2025
           </div>
           <div>
@@ -742,7 +821,7 @@ Recent Publications
             <span class="author">Sheryl Brahnam</span>,
             <span class="me">Daniel Fusaro</span>
           </div>
-          <div class="venue">
+          <div class="venue" data-venue="Bioinform. adv">
             <i>Bioinformatics Advances</i>, 2025
           </div>
           <div>
@@ -785,7 +864,7 @@ Recent Publications
             <span class="author">Francesco Boscolo Meneguolo</span>,
             <span class="author">Maria Sgaravatto</span>
           </div>
-          <div class="venue">
+          <div class="venue" data-venue="ESWA">
             <i>Expert Systems with Applications</i>, 2025
           </div>
           <div>
@@ -825,7 +904,7 @@ Recent Publications
             <span class="me">Daniel Fusaro</span>,
             <span class="author">Alberto Pretto</span>
           </div>
-          <div class="venue">
+          <div class="venue" data-venue="ECMR">
             <i>European Conference on Mobile Robots (ECMR)</i>, 2025
           </div>
           <div>
@@ -866,7 +945,7 @@ Recent Publications
             <span class="author">Wanmeng Li</span>,
             <span class="author">Alberto Pretto</span>
           </div>
-          <div class="venue">
+          <div class="venue" data-venue="SIMPAR">
             <i>IEEE International Conference on Simulation, Modeling, and Programming for Autonomous Robots (SIMPAR)</i>, 2025
           </div>
           <div>
@@ -910,7 +989,7 @@ Recent Publications
             <span class="author">Alberto Pretto</span>,
             <span class="author">Cyrill Stachniss</span>
           </div>
-          <div class="venue">
+          <div class="venue" data-venue="RA-L">
             <i>IEEE Robotics and Automation Letters</i>, 2025
           </div>
           <div>
@@ -955,7 +1034,7 @@ Recent Publications
             <span class="author">Gustavo Zanoni Felipe</span>,
             <span class="author">Sheryl Brahnam</span>
           </div>
-          <div class="venue">
+          <div class="venue" data-venue="AIHDM">
             <i>Advances in Intelligent Healthcare Delivery and Management</i>, 2024
           </div>
           <div>
@@ -997,7 +1076,7 @@ Recent Publications
             <span class="author">Nicola Bellotto</span>,
             <span class="author">Alberto Pretto</span>
           </div>
-          <div class="venue">
+          <div class="venue" data-venue="CIS-RAM">
             <i>IEEE Int. Conf. on Cybernetics and Intelligent Systems (CIS) and Robotics, Automation and Mechatronics (RAM)</i>, 2024
           </div>
           <div>
@@ -1037,7 +1116,7 @@ Recent Publications
             <span class="author">Emanuele Menegatti</span>,
             <span class="author">Alberto Pretto</span>
           </div>
-          <div class="venue">
+          <div class="venue" data-venue="IROS">
             <i>IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)</i>, 2024
           </div>
           <div>
@@ -1078,7 +1157,7 @@ Recent Publications
             <span class="author">Simone Mosco</span>,
             <span class="author">Alberto Pretto</span>
           </div>
-          <div class="venue">
+          <div class="venue" data-venue="ICRA-Workshops">
             <i>IEEE ICRA Workshop on Field Robotics</i>, 2024
           </div>
           <div>
@@ -1121,7 +1200,7 @@ Recent Publications
             <span class="author">Carlo Fantozzi</span>,
             <span class="author">Alberto Pretto</span>,
           </div>
-          <div class="venue">
+          <div class="venue" data-venue="Entropy">
             <i>MDPI Entropy</i>, 2023
           </div>
           <div>
@@ -1165,7 +1244,7 @@ Recent Publications
             <span class="author">Daniele Evangelista</span>,
             <span class="author">Alberto Pretto</span>
           </div>
-          <div class="venue">
+          <div class="venue" data-venue="ICVS">
             <i>IEEE International Conference on Computer Vision Systems</i>, 2023
           </div>
           <div>
@@ -1207,7 +1286,7 @@ Recent Publications
             <span class="author">Emanuele Menegatti</span>,
             <span class="author">Alberto Pretto</span>
           </div>
-          <div class="venue">
+          <div class="venue" data-venue="RAS">
             <i>Robotics and Autonomous Systems</i>, 2023
           </div>
           <div>
@@ -1250,7 +1329,7 @@ Recent Publications
             <span class="author">Gloria Beraldo</span>,
             <span class="author">Luca Tonin</span>,
           </div>
-          <div class="venue">
+          <div class="venue" data-venue="ICORR">
             <i>Int. Conf. on Rehabilitation Robotics (ICORR)</i>, 2022
           </div>
           <div>
@@ -1292,7 +1371,7 @@ Recent Publications
             <span class="author">Pietro Iob</span>,
             <span class="author">Alberto Pretto</span>
           </div>
-          <div class="venue">
+          <div class="venue" data-venue="IV">
             <i>IEEE Intelligent Vehicles Symposium (IV)</i>, 2022
           </div>
           <div>
@@ -1335,7 +1414,7 @@ Recent Publications
             <span class="author">Emanuele Menegatti</span>,
             <span class="author">Alberto Pretto</span>
           </div>
-          <div class="venue">
+          <div class="venue" data-venue="IAS">
             <i>Int. Conf. on Intelligent Autonomous Systems (IAS)</i>, 2022
           </div>
           <div>
