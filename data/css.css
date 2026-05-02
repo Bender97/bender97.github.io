@@ -484,3 +484,13 @@
   position: relative;
   z-index: 1;
 }
+
+/* cite */
+.gs_or_svg {
+  position: relative;
+  width: 22px;
+  height: 22px;
+  vertical-align: middle;
+  fill: none;
+  stroke: #8C1515;
+}
